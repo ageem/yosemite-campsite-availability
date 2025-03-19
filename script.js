@@ -248,6 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Create accordion content
                     const contentDiv = document.createElement("div");
                     contentDiv.className = "accordion-content bg-white p-6"; // Increased padding
+                    
+                    // Ensure the accordion is closed by default by removing any 'open' class
+                    contentDiv.classList.remove("open");
+                    
                     contentDiv.innerHTML = `
                         <h4 class="font-medium mb-3">Available Sites:</h4>
                         <ul class="pl-6 list-disc space-y-2">
@@ -258,7 +262,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     
                     // Add event listener to toggle accordion
-                    headerDiv.addEventListener("click", function() {
+                    headerDiv.addEventListener("click", function(event) {
+                        // Prevent default behavior
+                        event.preventDefault();
+                        
+                        // Toggle the open class
                         contentDiv.classList.toggle("open");
                         headerDiv.querySelector(".accordion-icon").classList.toggle("open");
                     });

@@ -27,17 +27,19 @@
         }
         
         .accordion-content {
-            max-height: 0;
+            max-height: 0 !important;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
             padding-top: 0;
             padding-bottom: 0;
+            display: none;
         }
         
         .accordion-content.open {
-            max-height: 1000px; /* Large enough to fit content */
+            max-height: 1000px !important; /* Large enough to fit content */
             padding-top: 1.5rem;
             padding-bottom: 1.5rem;
+            display: block;
         }
         
         .accordion-icon {
