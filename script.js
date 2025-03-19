@@ -71,7 +71,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "232447": "Upper Pines",
         "232450": "Lower Pines",
         "232449": "North Pines",
-        "232451": "Hodgdon Meadow"
+        "232451": "Hodgdon Meadow",
+        "233503": "Grant River",
+        "255119": "Fowlers Campground"
     };
     
     // Campground links mapping
@@ -79,7 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "232447": "https://www.recreation.gov/camping/campgrounds/232447",
         "232450": "https://www.recreation.gov/camping/campgrounds/232450",
         "232449": "https://www.recreation.gov/camping/campgrounds/232449",
-        "232451": "https://www.recreation.gov/camping/campgrounds/232451"
+        "232451": "https://www.recreation.gov/camping/campgrounds/232451",
+        "233503": "https://www.recreation.gov/camping/campgrounds/233503",
+        "255119": "https://www.recreation.gov/camping/campgrounds/255119"
     };
     
     // Save campground selections to cookies

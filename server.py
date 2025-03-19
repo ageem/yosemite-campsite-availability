@@ -118,7 +118,9 @@ def check_availability_api(start_date, end_date, campgrounds):
         "232447": "Upper Pines",
         "232450": "Lower Pines",
         "232449": "North Pines",
-        "232451": "Hodgdon Meadow"
+        "232451": "Hodgdon Meadow",
+        "233503": "Grant River",
+        "255119": "Fowlers Campground"
     }
     
     for facility_id in campgrounds:

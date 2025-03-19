@@ -8,7 +8,9 @@ CAMPGROUND_NAMES = {
     "232447": "Upper Pines",
     "232450": "Lower Pines",
     "232449": "North Pines",
-    "232451": "Hodgdon Meadow"
+    "232451": "Hodgdon Meadow",
+    "233503": "Grant River",
+    "255119": "Fowlers Campground"
 }
 
 def check_campsite_availability(facility_id, start_date, end_date):
