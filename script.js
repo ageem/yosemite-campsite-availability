@@ -66,9 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("loading").classList.remove("hidden");
         document.getElementById("results").classList.add("hidden");
         
-        // Use the server-side API endpoint to check availability
+        // Use the serverless API endpoint to check availability
         try {
-            const response = await fetch('/check_availability', {
+            // Determine the API URL based on whether we're in development or production
+            const apiUrl = window.location.hostname === 'localhost' 
+                ? '/check_availability' 
+                : '/api/check_availability';
+                
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

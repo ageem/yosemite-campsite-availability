@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "script.js", "use": "@vercel/static" },
+    { "src": "api/*.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/script.js", "dest": "/script.js" },
+    { "src": "/api/check_availability", "dest": "/api/check_availability.py" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
