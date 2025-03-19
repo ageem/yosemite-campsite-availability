@@ -15,6 +15,38 @@
             border: 1px solid #ccc;
             border-radius: 0.25rem;
         }
+        
+        /* Accordion styles */
+        .accordion-header {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .accordion-header:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        
+        .accordion-content.open {
+            max-height: 1000px; /* Large enough to fit content */
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-icon.open {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">

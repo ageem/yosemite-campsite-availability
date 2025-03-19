@@ -225,27 +225,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (Object.keys(availability).length > 0) {
                     const campgroundDiv = document.createElement("div");
-                    campgroundDiv.className = "mb-6 pb-4 border-b border-gray-200";
+                    campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
                     
-                    campgroundDiv.innerHTML = `
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-lg font-medium text-green-700">🎉 ${campgroundName} has availability!</h3>
-                            <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center">
+                    // Create accordion header with availability status
+                    const headerDiv = document.createElement("div");
+                    headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-green-50";
+                    headerDiv.innerHTML = `
+                        <h3 class="text-lg font-medium text-green-700">🎉 ${campgroundName} has availability!</h3>
+                        <div class="flex items-center">
+                            <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center mr-3" onclick="event.stopPropagation()">
                                 View Campground
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                                 </svg>
                             </a>
-                        </div>
-                        <div class="bg-green-50 p-3 rounded-md">
-                            <h4 class="font-medium mb-2">Available Sites:</h4>
-                            <ul class="pl-6 list-disc space-y-1">
-                                ${Object.entries(availability).map(([siteId, dates]) => {
-                                    return `<li>Site ${siteId}: ${Array.isArray(dates) ? dates.join(", ") : dates}</li>`;
-                                }).join('')}
-                            </ul>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 accordion-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
                         </div>
                     `;
+                    
+                    // Create accordion content
+                    const contentDiv = document.createElement("div");
+                    contentDiv.className = "accordion-content bg-white p-6"; // Increased padding
+                    contentDiv.innerHTML = `
+                        <h4 class="font-medium mb-3">Available Sites:</h4>
+                        <ul class="pl-6 list-disc space-y-2">
+                            ${Object.entries(availability).map(([siteId, dates]) => {
+                                return `<li>Site ${siteId}: ${Array.isArray(dates) ? dates.join(", ") : dates}</li>`;
+                            }).join('')}
+                        </ul>
+                    `;
+                    
+                    // Add event listener to toggle accordion
+                    headerDiv.addEventListener("click", function() {
+                        contentDiv.classList.toggle("open");
+                        headerDiv.querySelector(".accordion-icon").classList.toggle("open");
+                    });
+                    
+                    // Append header and content to the campground div
+                    campgroundDiv.appendChild(headerDiv);
+                    campgroundDiv.appendChild(contentDiv);
                     
                     resultsContent.appendChild(campgroundDiv);
                 }
@@ -259,12 +279,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (Object.keys(availability).length === 0) {
                     const campgroundDiv = document.createElement("div");
-                    campgroundDiv.className = "mb-6 pb-4 border-b border-gray-200";
+                    campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
                     
-                    campgroundDiv.innerHTML = `
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-lg font-medium text-red-600">❌ No availability in ${campgroundName}</h3>
-                            <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center">
+                    // Create accordion header with no availability status
+                    const headerDiv = document.createElement("div");
+                    headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-red-50";
+                    headerDiv.innerHTML = `
+                        <h3 class="text-lg font-medium text-red-600">❌ No availability in ${campgroundName}</h3>
+                        <div class="flex items-center">
+                            <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center" onclick="event.stopPropagation()">
                                 View Campground
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -273,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     
+                    campgroundDiv.appendChild(headerDiv);
                     resultsContent.appendChild(campgroundDiv);
                 }
             }
