@@ -254,15 +254,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Handle the API's date format which includes T00:00:00Z
                         const dateOnly = dateStr.split('T')[0];
                         const date = new Date(dateOnly);
-                        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                        // Format as "Day, Month Day" (e.g., "Mon, Apr 14")
+                        return date.toLocaleDateString('en-US', { 
+                            weekday: 'short', 
+                            month: 'short', 
+                            day: 'numeric' 
+                        });
                     };
                     
                     // Group dates by month for better organization
                     const groupDatesByMonth = (dates) => {
                         const grouped = {};
                         dates.forEach(date => {
+                            // Extract the date part and create a Date object
                             const dateOnly = date.split('T')[0];
-                            const monthYear = dateOnly.substring(0, 7); // YYYY-MM
+                            const dateObj = new Date(dateOnly);
+                            
+                            // Get month and year in the format "April 2025"
+                            const monthYear = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                            
                             if (!grouped[monthYear]) {
                                 grouped[monthYear] = [];
                             }
@@ -286,8 +296,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="font-medium">Site ${siteId}:</div>
                                     <div class="ml-4 mt-1">
                                         ${Object.entries(groupedDates).map(([monthYear, monthDates]) => {
-                                            const monthName = new Date(monthYear + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                                            
                                             // Format dates and chunk them into groups of 4 for better readability
                                             const formattedDates = monthDates.map(d => formatDate(d));
                                             const chunkedDates = [];
@@ -296,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             }
                                             
                                             return `<div class="mb-2">
-                                                <div class="font-medium text-sm text-gray-700">${monthName}:</div>
+                                                <div class="font-medium text-sm text-gray-700">${monthYear}:</div>
                                                 <div class="text-sm text-gray-600">${chunkedDates.join("<br>")}</div>
                                             </div>`;
                                         }).join('')}
