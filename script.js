@@ -1,18 +1,70 @@
 // Initialize date pickers and other functionality when the DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
+    // Cookie functions
+    function setCookie(name, value, days) {
+        let expires = "";
+        if (days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+    
+    // Get today's date
+    const today = new Date();
+    
     // Initialize flatpickr for start date
     const startDatePicker = flatpickr("#start-date", {
         dateFormat: "Y-m-d", // YYYY-MM-DD format to match Python script
         minDate: "today",
-        defaultDate: new Date()
+        defaultDate: today,
+        onChange: function(selectedDates, dateStr) {
+            // Save to cookie
+            setCookie("yosemite_start_date", dateStr, 30);
+            
+            // Update end date min date to be after start date
+            if (selectedDates[0]) {
+                endDatePicker.set("minDate", selectedDates[0]);
+            }
+        }
     });
+    
+    // Get saved dates from cookies
+    const savedStartDate = getCookie("yosemite_start_date");
+    const savedEndDate = getCookie("yosemite_end_date");
+    
+    // Set start date from cookie if available
+    if (savedStartDate) {
+        startDatePicker.setDate(savedStartDate);
+    }
     
     // Initialize flatpickr for end date
     const endDatePicker = flatpickr("#end-date", {
         dateFormat: "Y-m-d", // YYYY-MM-DD format to match Python script
-        minDate: "today",
-        defaultDate: new Date(new Date().setDate(new Date().getDate() + 7)) // Default to 7 days from today
+        minDate: savedStartDate || "today",
+        defaultDate: savedEndDate || null, // Only use saved date if available
+        onChange: function(selectedDates, dateStr) {
+            // Save to cookie
+            setCookie("yosemite_end_date", dateStr, 30);
+        }
     });
+    
+    // Set end date from cookie if available
+    if (savedEndDate) {
+        endDatePicker.setDate(savedEndDate);
+    }
     
     // Campground names mapping
     const CAMPGROUND_NAMES = {
@@ -29,6 +81,48 @@ document.addEventListener('DOMContentLoaded', function() {
         "232449": "https://www.recreation.gov/camping/campgrounds/232449",
         "232451": "https://www.recreation.gov/camping/campgrounds/232451"
     };
+    
+    // Save campground selections to cookies
+    function saveCampgroundSelections() {
+        const selectedCampgrounds = [];
+        document.querySelectorAll(".campground-checkbox:checked").forEach(checkbox => {
+            selectedCampgrounds.push(checkbox.value);
+        });
+        setCookie("yosemite_campgrounds", JSON.stringify(selectedCampgrounds), 30);
+    }
+    
+    // Load campground selections from cookies
+    function loadCampgroundSelections() {
+        const savedCampgrounds = getCookie("yosemite_campgrounds");
+        if (savedCampgrounds) {
+            try {
+                const campgrounds = JSON.parse(savedCampgrounds);
+                
+                // First uncheck all
+                document.querySelectorAll(".campground-checkbox").forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Then check only the saved ones
+                campgrounds.forEach(id => {
+                    const checkbox = document.querySelector(`.campground-checkbox[value="${id}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                });
+            } catch (e) {
+                console.error("Error loading saved campgrounds:", e);
+            }
+        }
+    }
+    
+    // Add event listeners to save campground selections
+    document.querySelectorAll(".campground-checkbox").forEach(checkbox => {
+        checkbox.addEventListener("change", saveCampgroundSelections);
+    });
+    
+    // Load saved campground selections
+    loadCampgroundSelections();
     
     document.getElementById("search-btn").addEventListener("click", async function() {
         // Get selected dates
