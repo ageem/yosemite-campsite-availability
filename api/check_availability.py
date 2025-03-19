@@ -83,6 +83,9 @@ class Handler(BaseHTTPRequestHandler):
         if not data or 'startDate' not in data or 'endDate' not in data or 'campgrounds' not in data:
             self.send_response(400)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
             self.end_headers()
             self.wfile.write(json.dumps({
                 'success': False, 
@@ -101,6 +104,9 @@ class Handler(BaseHTTPRequestHandler):
         except ValueError:
             self.send_response(400)
             self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
             self.end_headers()
             self.wfile.write(json.dumps({
                 'success': False, 
@@ -152,4 +158,5 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Max-Age', '86400')  # 24 hours
         self.end_headers()
