@@ -249,24 +249,65 @@ document.addEventListener('DOMContentLoaded', function() {
                     const contentDiv = document.createElement("div");
                     contentDiv.className = "accordion-content bg-white p-6"; // Increased padding
                     
-                    // Ensure the accordion is closed by default by removing any 'open' class
-                    contentDiv.classList.remove("open");
+                    // Format dates to be more readable
+                    const formatDate = (dateStr) => {
+                        // Handle the API's date format which includes T00:00:00Z
+                        const dateOnly = dateStr.split('T')[0];
+                        const date = new Date(dateOnly);
+                        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    };
+                    
+                    // Group dates by month for better organization
+                    const groupDatesByMonth = (dates) => {
+                        const grouped = {};
+                        dates.forEach(date => {
+                            const dateOnly = date.split('T')[0];
+                            const monthYear = dateOnly.substring(0, 7); // YYYY-MM
+                            if (!grouped[monthYear]) {
+                                grouped[monthYear] = [];
+                            }
+                            grouped[monthYear].push(date);
+                        });
+                        return grouped;
+                    };
                     
                     contentDiv.innerHTML = `
                         <h4 class="font-medium mb-3">Available Sites:</h4>
-                        <ul class="pl-6 list-disc space-y-2">
+                        <ul class="pl-6 list-disc space-y-4">
                             ${Object.entries(availability).map(([siteId, dates]) => {
-                                return `<li>Site ${siteId}: ${Array.isArray(dates) ? dates.join(", ") : dates}</li>`;
+                                if (!Array.isArray(dates)) {
+                                    return `<li>Site ${siteId}: ${dates}</li>`;
+                                }
+                                
+                                // Group dates by month
+                                const groupedDates = groupDatesByMonth(dates);
+                                
+                                return `<li>
+                                    <div class="font-medium">Site ${siteId}:</div>
+                                    <div class="ml-4 mt-1">
+                                        ${Object.entries(groupedDates).map(([monthYear, monthDates]) => {
+                                            const monthName = new Date(monthYear + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                                            
+                                            // Format dates and chunk them into groups of 4 for better readability
+                                            const formattedDates = monthDates.map(d => formatDate(d));
+                                            const chunkedDates = [];
+                                            for (let i = 0; i < formattedDates.length; i += 4) {
+                                                chunkedDates.push(formattedDates.slice(i, i + 4).join(", "));
+                                            }
+                                            
+                                            return `<div class="mb-2">
+                                                <div class="font-medium text-sm text-gray-700">${monthName}:</div>
+                                                <div class="text-sm text-gray-600">${chunkedDates.join("<br>")}</div>
+                                            </div>`;
+                                        }).join('')}
+                                    </div>
+                                </li>`;
                             }).join('')}
                         </ul>
                     `;
                     
                     // Add event listener to toggle accordion
-                    headerDiv.addEventListener("click", function(event) {
-                        // Prevent default behavior
-                        event.preventDefault();
-                        
-                        // Toggle the open class
+                    headerDiv.addEventListener("click", function() {
                         contentDiv.classList.toggle("open");
                         headerDiv.querySelector(".accordion-icon").classList.toggle("open");
                     });

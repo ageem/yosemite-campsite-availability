@@ -45,8 +45,9 @@ def check_campsite_availability(facility_id, start_date, end_date):
     
     for month_date in months_to_check:
         try:
-            # Make API request
-            url = f"https://www.recreation.gov/api/camps/availability/campground/{facility_id}/month?start_date={month_date}"
+            # Make API request with URL-encoded date format
+            formatted_date = f"{month_date}T00%3A00%3A00.000Z"
+            url = f"https://www.recreation.gov/api/camps/availability/campground/{facility_id}/month?start_date={formatted_date}"
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
