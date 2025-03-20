@@ -246,13 +246,42 @@
                 font-size: 1rem;
             }
         }
+
+        /* Fade in animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
     </style>
 </head>
 <body class="bg-white min-h-screen">
     <div class="container mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8 text-center">Yosemite Campsite Availability</h1>
+        <h1 class="text-3xl font-bold mb-8 text-center fade-in-up">Yosemite Campsite Availability</h1>
         
-        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg shadow-md p-4 md:p-6 max-w-2xl mx-auto fade-in-up delay-1">
             <div class="mb-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -266,7 +295,7 @@
                 </div>
             </div>
             
-            <div class="mb-6">
+            <div class="mb-6 fade-in-up delay-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Select Campgrounds</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div class="flex items-center">
@@ -308,7 +337,7 @@
                 </div>
             </div>
             
-            <button id="search-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-300">Check Availability</button>
+            <button id="search-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 fade-in-up delay-3">Check Availability</button>
         </div>
         
         <div id="loading" class="hidden mt-8 text-center">

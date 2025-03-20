@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!foundAny) {
             resultsContent.innerHTML = `
-                <div class="bg-red-50 p-4 rounded-md">
+                <div class="bg-red-50 p-4 rounded-md fade-in-up">
                     <p class="text-red-600 font-medium">No availability found for the selected date range and campgrounds.</p>
                 </div>
             `;
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (Object.keys(availability).length > 0) {
                 const campgroundDiv = document.createElement("div");
-                campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
+                campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden fade-in-up";
                 
                 // Create unique ID for this accordion
                 const accordionId = `accordion-${facilityId}`;
@@ -371,7 +371,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (Object.keys(availability).length === 0) {
                 const campgroundDiv = document.createElement("div");
-                campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
+                campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden fade-in-up";
                 
                 // Create accordion header with no availability status
                 const headerDiv = document.createElement("div");
