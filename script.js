@@ -239,9 +239,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <h3 class="text-lg md:text-xl font-medium text-green-800">${campgroundName} has availability!</h3>
                     </div>
                     <div class="flex items-center">
-                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 mr-3 text-sm md:text-base">
-                            View Campground <span class="hidden sm:inline">↗</span>
-                        </a>
                         <span class="accordion-icon text-green-600 text-lg">▼</span>
                     </div>
                 `;
@@ -254,6 +251,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 contentDiv.style.overflow = "hidden";
                 contentDiv.style.transition = "max-height 0.5s ease-out"; 
                 contentDiv.style.display = "none"; 
+                
+                // Add the "Available Sites:" text and View Campground link at the top of content
+                const contentHeaderDiv = document.createElement("div");
+                contentHeaderDiv.className = "flex justify-between items-center mb-4";
+                contentHeaderDiv.innerHTML = `
+                    <h4 class="text-lg font-medium text-gray-700">Available Sites:</h4>
+                    <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 text-sm md:text-base">
+                        View Campground <span class="hidden sm:inline">↗</span>
+                    </a>
+                `;
+                contentDiv.appendChild(contentHeaderDiv);
                 
                 // Format dates to be more readable
                 function formatDate(dateStr) {
@@ -311,8 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     datesHtml += '</div>';
                 });
                 
-                contentDiv.innerHTML = `
-                    <h4 class="font-medium mb-3"></h4>
+                contentDiv.innerHTML += `
                     <ul class="pl-6 list-disc space-y-6">
                         ${Object.entries(availability).map(([siteId, dates]) => {
                             if (!Array.isArray(dates)) {
