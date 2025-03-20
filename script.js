@@ -236,17 +236,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Create accordion header with availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-green-50";
+                headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-green-100 rounded-t-lg";
                 headerDiv.innerHTML = `
-                    <h3 class="text-lg font-medium text-green-600">🏕️ ${campgroundName} has availability!</h3>
                     <div class="flex items-center">
-                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center mr-3" onclick="event.stopPropagation()">
-                            View Campground
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
+                        <span class="text-green-600 mr-2">🏕️</span>
+                        <h3 class="text-lg md:text-xl font-medium text-green-800">${campgroundName} has availability!</h3>
+                    </div>
+                    <div class="flex items-center">
+                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 mr-3 text-sm md:text-base">
+                            View Campground <span class="hidden sm:inline">↗</span>
                         </a>
-                        <span class="accordion-icon">▼</span>
+                        <span class="accordion-icon text-green-600 text-lg">▼</span>
                     </div>
                 `;
                 
@@ -272,24 +272,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 };
                 
-                // Group dates by month for better organization
-                const groupDatesByMonth = (dates) => {
-                    const grouped = {};
-                    dates.forEach(date => {
-                        // Extract the date part and create a Date object
-                        const dateOnly = date.split('T')[0];
-                        const dateObj = new Date(dateOnly);
-                        
-                        // Get month and year in the format "April 2025"
-                        const monthYear = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                        
-                        if (!grouped[monthYear]) {
-                            grouped[monthYear] = [];
-                        }
-                        grouped[monthYear].push(date);
-                    });
-                    return grouped;
-                };
+                // Group dates by month and year
+                const groupedDates = {};
+                dates.forEach(date => {
+                    const dateObj = new Date(date);
+                    const monthYear = `${dateObj.toLocaleString('default', { month: 'long' })} ${dateObj.getFullYear()}`;
+                    
+                    if (!groupedDates[monthYear]) {
+                        groupedDates[monthYear] = [];
+                    }
+                    
+                    groupedDates[monthYear].push(dateObj);
+                });
+                
+                // Create HTML for grouped dates
+                let datesHtml = '';
+                
+                Object.entries(groupedDates).forEach(([monthYear, dates]) => {
+                    datesHtml += `<h4 class="font-semibold mt-4 mb-2 text-gray-700">${monthYear}</h4>`;
+                    datesHtml += '<div class="flex flex-wrap">';
+                    
+                    // Group dates in chunks of 3 for better display
+                    for (let i = 0; i < dates.length; i++) {
+                        const date = dates[i];
+                        const formattedDate = formatDate(date.toISOString());
+                        datesHtml += `<span class="bg-green-100 text-green-800 text-xs md:text-sm px-2 py-1 rounded mr-2 mb-2">${formattedDate}</span>`;
+                    }
+                    
+                    datesHtml += '</div>';
+                });
                 
                 contentDiv.innerHTML = `
                     <h4 class="font-medium mb-3"></h4>
@@ -299,25 +310,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 return `<li>Site ${siteId}: ${dates}</li>`;
                             }
                             
-                            // Group dates by month
-                            const groupedDates = groupDatesByMonth(dates);
-                            
                             return `<li>
                                 <div class="font-medium">Site ${siteId}:</div>
                                 <div class="ml-4 mt-1">
-                                    ${Object.entries(groupedDates).map(([monthYear, monthDates]) => {
-                                        // Format dates and chunk them into groups of 3 for better readability
-                                        const formattedDates = monthDates.map(d => formatDate(d));
-                                        const chunkedDates = [];
-                                        for (let i = 0; i < formattedDates.length; i += 3) {
-                                            chunkedDates.push(formattedDates.slice(i, i + 3).join(", "));
-                                        }
-                                        
-                                        return `<div class="mb-3">
-                                            <div class="font-medium text-sm text-gray-700">${monthYear}:</div>
-                                            <div class="text-sm text-gray-600">${chunkedDates.join("<br>")}</div>
-                                        </div>`;
-                                    }).join('')}
+                                    ${datesHtml}
                                 </div>
                             </li>`;
                         }).join('')}
