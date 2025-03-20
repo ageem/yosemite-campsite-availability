@@ -105,6 +105,7 @@ def check_availability():
         })
     
     except Exception as e:
+        print(f"Error in check_availability: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 def check_availability_api(start_date, end_date, campgrounds):

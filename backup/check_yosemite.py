@@ -48,7 +48,6 @@ def check_campsite_availability(facility_id, start_date, end_date):
             # Make API request with URL-encoded date format
             formatted_date = f"{month_date}T00%3A00%3A00.000Z"
             url = f"https://www.recreation.gov/api/camps/availability/campground/{facility_id}/month?start_date={formatted_date}"
-            
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
@@ -63,17 +62,74 @@ def check_campsite_availability(facility_id, start_date, end_date):
             
             # Process the response data
             for site_id, details in data.get('campsites', {}).items():
-                for date_str, status in details.get('availabilities', {}).items():
-                    # Extract just the date part (YYYY-MM-DD) for comparison
-                    date_part = date_str.split('T')[0] if 'T' in date_str else date_str
-                    
-                    # Compare dates as strings (YYYY-MM-DD format ensures correct comparison)
-                    if date_part >= start_date and date_part <= end_date and status == "Available":
+                for date, status in details.get('availabilities', {}).items():
+                    if date >= start_date and date <= end_date and status == "Available":
                         if site_id not in availability:
                             availability[site_id] = []
-                        availability[site_id].append(date_part)
+                        availability[site_id].append(date)
                         
         except Exception as e:
             print(f"Error checking availability for month {month_date}: {e}")
     
     return availability
+
+def check_selected_campgrounds(campgrounds, start_date, end_date):
+    """
+    Check availability for selected campgrounds.
+    
+    Args:
+        campgrounds (list): List of facility IDs to check
+        start_date (str): Start date in YYYY-MM-DD format
+        end_date (str): End date in YYYY-MM-DD format
+        
+    Returns:
+        tuple: (results dict, found_any boolean)
+    """
+    results = {}
+    found_any = False
+    
+    for facility_id in campgrounds:
+        try:
+            availability = check_campsite_availability(facility_id, start_date, end_date)
+            
+            # Get campground name
+            campground_name = CAMPGROUND_NAMES.get(facility_id, f"Campground {facility_id}")
+            
+            results[facility_id] = {
+                'name': campground_name,
+                'availability': availability
+            }
+            
+            if availability and len(availability) > 0:
+                found_any = True
+                
+        except Exception as e:
+            print(f"Error checking availability for facility {facility_id}: {e}")
+            results[facility_id] = {
+                'name': CAMPGROUND_NAMES.get(facility_id, f"Campground {facility_id}"),
+                'availability': {},
+                'error': str(e)
+            }
+    
+    return results, found_any
+
+if __name__ == "__main__":
+    # Example usage
+    start_date = "2025-06-01"
+    end_date = "2025-06-07"
+    
+    # Check all campgrounds
+    campgrounds = list(CAMPGROUND_NAMES.keys())
+    
+    results, found_any = check_selected_campgrounds(campgrounds, start_date, end_date)
+    
+    if found_any:
+        print("Found available campsites!")
+        for facility_id, data in results.items():
+            if data['availability']:
+                print(f"\n{data['name']}:")
+                for site_id, dates in data['availability'].items():
+                    print(f"  Site {site_id}: {', '.join(dates)}")
+    else:
+        print("No campsites available for the selected dates.")
+        print("Try different dates or check back later.")

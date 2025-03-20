@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 contentDiv.style.display = "none"; 
                 
                 // Format dates to be more readable
-                const formatDate = (dateStr) => {
+                function formatDate(dateStr) {
                     // Handle the API's date format which includes T00:00:00Z
                     const dateOnly = dateStr.split('T')[0];
                     const date = new Date(dateOnly);
@@ -274,30 +274,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Group dates by month and year
                 const groupedDates = {};
-                dates.forEach(date => {
-                    const dateObj = new Date(date);
-                    const monthYear = `${dateObj.toLocaleString('default', { month: 'long' })} ${dateObj.getFullYear()}`;
-                    
-                    if (!groupedDates[monthYear]) {
-                        groupedDates[monthYear] = [];
+                
+                Object.keys(availability).forEach(siteId => {
+                    const dates = availability[siteId];
+                    if (!Array.isArray(dates)) {
+                        return;
                     }
-                    
-                    groupedDates[monthYear].push(dateObj);
+                    dates.forEach(date => {
+                        const dateObj = new Date(date);
+                        const monthYear = `${dateObj.toLocaleString('default', { month: 'long' })} ${dateObj.getFullYear()}`;
+                        
+                        if (!groupedDates[monthYear]) {
+                            groupedDates[monthYear] = {};
+                        }
+                        
+                        // Use the date string as key to avoid duplicates
+                        const dateStr = dateObj.toISOString().split('T')[0];
+                        if (!groupedDates[monthYear][dateStr]) {
+                            groupedDates[monthYear][dateStr] = dateObj;
+                        }
+                    });
                 });
                 
                 // Create HTML for grouped dates
                 let datesHtml = '';
                 
-                Object.entries(groupedDates).forEach(([monthYear, dates]) => {
+                Object.entries(groupedDates).forEach(([monthYear, datesMap]) => {
                     datesHtml += `<h4 class="font-semibold mt-4 mb-2 text-gray-700">${monthYear}</h4>`;
                     datesHtml += '<div class="flex flex-wrap">';
                     
+                    // Convert the map to an array and sort by date
+                    const sortedDates = Object.values(datesMap).sort((a, b) => a - b);
+                    
                     // Group dates in chunks of 3 for better display
-                    for (let i = 0; i < dates.length; i++) {
-                        const date = dates[i];
+                    sortedDates.forEach(date => {
                         const formattedDate = formatDate(date.toISOString());
                         datesHtml += `<span class="bg-green-100 text-green-800 text-xs md:text-sm px-2 py-1 rounded mr-2 mb-2">${formattedDate}</span>`;
-                    }
+                    });
                     
                     datesHtml += '</div>';
                 });
