@@ -372,11 +372,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Create accordion header with no availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-red-50";
+                headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-red-50 rounded-t-lg";
                 headerDiv.innerHTML = `
-                    <h3 class="text-lg font-medium text-red-600">❌ No availability in ${campgroundName}</h3>
                     <div class="flex items-center">
-                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center" onclick="event.stopPropagation()">
+                        <span class="text-red-600 mr-2">❌</span>
+                        <h3 class="text-lg font-medium text-red-600">No availability in ${campgroundName}</h3>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="accordion-icon text-red-600 text-lg">▼</span>
+                    </div>
+                `;
+
+                // Create accordion content
+                const contentDiv = document.createElement("div");
+                contentDiv.className = "p-6 bg-white";
+                contentDiv.style.maxHeight = "0";
+                contentDiv.style.overflow = "hidden";
+                contentDiv.style.transition = "max-height 0.5s ease-out";
+                contentDiv.style.display = "none";
+
+                // Add View Campground link in the content
+                contentDiv.innerHTML = `
+                    <div class="flex justify-end">
+                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center">
                             View Campground
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -384,8 +402,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         </a>
                     </div>
                 `;
+
+                // Add event listener to toggle accordion
+                headerDiv.addEventListener("click", function() {
+                    const arrow = headerDiv.querySelector('.accordion-icon');
+                    if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
+                        contentDiv.style.maxHeight = "2000px";
+                        arrow.textContent = '▲';
+                        contentDiv.style.display = "block";
+                    } else {
+                        contentDiv.style.maxHeight = "0px";
+                        arrow.textContent = '▼';
+                        setTimeout(() => {
+                            contentDiv.style.display = "none";
+                        }, 500);
+                    }
+                });
                 
                 campgroundDiv.appendChild(headerDiv);
+                campgroundDiv.appendChild(contentDiv);
                 resultsContent.appendChild(campgroundDiv);
             }
         }
