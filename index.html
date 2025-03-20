@@ -27,7 +27,7 @@
         }
         
         .accordion-content {
-            max-height: 0 !important;
+            max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease-out;
             padding-top: 0;
@@ -36,10 +36,11 @@
         }
         
         .accordion-content.open {
-            max-height: 1000px !important; /* Large enough to fit content */
+            max-height: 2000px; /* Increased to accommodate more content */
             padding-top: 1.5rem;
             padding-bottom: 1.5rem;
             display: block;
+            overflow: visible; /* Allow content to be fully visible */
         }
         
         .accordion-icon {
@@ -103,24 +104,6 @@
                         <input type="checkbox" id="hodgdon-meadow" class="campground-checkbox mr-2" value="232451" checked>
                         <label for="hodgdon-meadow">Hodgdon Meadow</label>
                         <a href="https://www.recreation.gov/camping/campgrounds/232451" target="_blank" class="ml-1 text-blue-500 hover:text-blue-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="grant-river" class="campground-checkbox mr-2" value="233503">
-                        <label for="grant-river">Grant River</label>
-                        <a href="https://www.recreation.gov/camping/campgrounds/233503" target="_blank" class="ml-1 text-blue-500 hover:text-blue-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="fowlers-campground" class="campground-checkbox mr-2" value="255119">
-                        <label for="fowlers-campground">Fowlers Campground</label>
-                        <a href="https://www.recreation.gov/camping/campgrounds/255119" target="_blank" class="ml-1 text-blue-500 hover:text-blue-700">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                             </svg>
