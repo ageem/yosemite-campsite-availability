@@ -205,160 +205,179 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Function to display results
     function displayResults(results, foundAny) {
+        const resultsDiv = document.getElementById("results");
         const resultsContent = document.getElementById("results-content");
         resultsContent.innerHTML = "";
         
         if (!foundAny) {
             resultsContent.innerHTML = `
-                <div class="text-center py-4">
-                    <p class="text-red-600 font-medium">❌ No campsites available for the selected dates.</p>
-                    <p class="text-gray-600 mt-2">Try different dates or check back later.</p>
+                <div class="bg-red-50 p-4 rounded-md">
+                    <p class="text-red-600 font-medium">No availability found for the selected date range and campgrounds.</p>
                 </div>
             `;
-        } else {
-            // First show campgrounds with availability
-            for (const [facilityId, campgroundData] of Object.entries(results)) {
-                const campgroundName = campgroundData.name || CAMPGROUND_NAMES[facilityId];
-                const availability = campgroundData.availability || {};
-                const campgroundLink = CAMPGROUND_LINKS[facilityId];
-                
-                if (Object.keys(availability).length > 0) {
-                    const campgroundDiv = document.createElement("div");
-                    campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
-                    
-                    // Create accordion header with availability status
-                    const headerDiv = document.createElement("div");
-                    headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-green-50";
-                    headerDiv.innerHTML = `
-                        <h3 class="text-lg font-medium text-green-700">🎉 ${campgroundName} has availability!</h3>
-                        <div class="flex items-center">
-                            <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center mr-3" onclick="event.stopPropagation()">
-                                View Campground
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 accordion-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                    `;
-                    
-                    // Create accordion content
-                    const contentDiv = document.createElement("div");
-                    contentDiv.className = "accordion-content bg-white p-6"; // Increased padding
-                    
-                    // Format dates to be more readable
-                    const formatDate = (dateStr) => {
-                        // Handle the API's date format which includes T00:00:00Z
-                        const dateOnly = dateStr.split('T')[0];
-                        const date = new Date(dateOnly);
-                        // Format as "Day, Month Day" (e.g., "Mon, Apr 14")
-                        return date.toLocaleDateString('en-US', { 
-                            weekday: 'short', 
-                            month: 'short', 
-                            day: 'numeric' 
-                        });
-                    };
-                    
-                    // Group dates by month for better organization
-                    const groupDatesByMonth = (dates) => {
-                        const grouped = {};
-                        dates.forEach(date => {
-                            // Extract the date part and create a Date object
-                            const dateOnly = date.split('T')[0];
-                            const dateObj = new Date(dateOnly);
-                            
-                            // Get month and year in the format "April 2025"
-                            const monthYear = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                            
-                            if (!grouped[monthYear]) {
-                                grouped[monthYear] = [];
-                            }
-                            grouped[monthYear].push(date);
-                        });
-                        return grouped;
-                    };
-                    
-                    contentDiv.innerHTML = `
-                        <h4 class="font-medium mb-3">Available Sites:</h4>
-                        <ul class="pl-6 list-disc space-y-4">
-                            ${Object.entries(availability).map(([siteId, dates]) => {
-                                if (!Array.isArray(dates)) {
-                                    return `<li>Site ${siteId}: ${dates}</li>`;
-                                }
-                                
-                                // Group dates by month
-                                const groupedDates = groupDatesByMonth(dates);
-                                
-                                return `<li>
-                                    <div class="font-medium">Site ${siteId}:</div>
-                                    <div class="ml-4 mt-1">
-                                        ${Object.entries(groupedDates).map(([monthYear, monthDates]) => {
-                                            // Format dates and chunk them into groups of 4 for better readability
-                                            const formattedDates = monthDates.map(d => formatDate(d));
-                                            const chunkedDates = [];
-                                            for (let i = 0; i < formattedDates.length; i += 4) {
-                                                chunkedDates.push(formattedDates.slice(i, i + 4).join(", "));
-                                            }
-                                            
-                                            return `<div class="mb-2">
-                                                <div class="font-medium text-sm text-gray-700">${monthYear}:</div>
-                                                <div class="text-sm text-gray-600">${chunkedDates.join("<br>")}</div>
-                                            </div>`;
-                                        }).join('')}
-                                    </div>
-                                </li>`;
-                            }).join('')}
-                        </ul>
-                    `;
-                    
-                    // Add event listener to toggle accordion
-                    headerDiv.addEventListener("click", function() {
-                        contentDiv.classList.toggle("open");
-                        headerDiv.querySelector(".accordion-icon").classList.toggle("open");
-                    });
-                    
-                    // Append header and content to the campground div
-                    campgroundDiv.appendChild(headerDiv);
-                    campgroundDiv.appendChild(contentDiv);
-                    
-                    resultsContent.appendChild(campgroundDiv);
-                }
-            }
+            resultsDiv.classList.remove("hidden");
+            return;
+        }
+        
+        // First show campgrounds with availability
+        for (const [facilityId, campgroundData] of Object.entries(results)) {
+            const campgroundName = campgroundData.name || CAMPGROUND_NAMES[facilityId];
+            const availability = campgroundData.availability || {};
+            const campgroundLink = CAMPGROUND_LINKS[facilityId];
             
-            // Then show campgrounds without availability
-            for (const [facilityId, campgroundData] of Object.entries(results)) {
-                const campgroundName = campgroundData.name || CAMPGROUND_NAMES[facilityId];
-                const availability = campgroundData.availability || {};
-                const campgroundLink = CAMPGROUND_LINKS[facilityId];
+            if (Object.keys(availability).length > 0) {
+                const campgroundDiv = document.createElement("div");
+                campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
                 
-                if (Object.keys(availability).length === 0) {
-                    const campgroundDiv = document.createElement("div");
-                    campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
-                    
-                    // Create accordion header with no availability status
-                    const headerDiv = document.createElement("div");
-                    headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-red-50";
-                    headerDiv.innerHTML = `
-                        <h3 class="text-lg font-medium text-red-600">❌ No availability in ${campgroundName}</h3>
-                        <div class="flex items-center">
-                            <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center" onclick="event.stopPropagation()">
-                                View Campground
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                </svg>
-                            </a>
-                        </div>
-                    `;
-                    
-                    campgroundDiv.appendChild(headerDiv);
-                    resultsContent.appendChild(campgroundDiv);
-                }
+                // Create unique ID for this accordion
+                const accordionId = `accordion-${facilityId}`;
+                
+                // Create accordion header with availability status
+                const headerDiv = document.createElement("div");
+                headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-green-50";
+                headerDiv.innerHTML = `
+                    <h3 class="text-lg font-medium text-green-600">🏕️ ${campgroundName} has availability!</h3>
+                    <div class="flex items-center">
+                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center mr-3" onclick="event.stopPropagation()">
+                            View Campground
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                `;
+                
+                // Create accordion content
+                const contentDiv = document.createElement("div");
+                contentDiv.id = accordionId;
+                contentDiv.className = "p-6 bg-white"; 
+                contentDiv.style.maxHeight = "0";
+                contentDiv.style.overflow = "hidden";
+                contentDiv.style.transition = "max-height 0.5s ease-out"; 
+                contentDiv.style.display = "none"; 
+                
+                // Format dates to be more readable
+                const formatDate = (dateStr) => {
+                    // Handle the API's date format which includes T00:00:00Z
+                    const dateOnly = dateStr.split('T')[0];
+                    const date = new Date(dateOnly);
+                    // Format as "Day, Month Day" (e.g., "Mon, Apr 14")
+                    return date.toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                };
+                
+                // Group dates by month for better organization
+                const groupDatesByMonth = (dates) => {
+                    const grouped = {};
+                    dates.forEach(date => {
+                        // Extract the date part and create a Date object
+                        const dateOnly = date.split('T')[0];
+                        const dateObj = new Date(dateOnly);
+                        
+                        // Get month and year in the format "April 2025"
+                        const monthYear = dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                        
+                        if (!grouped[monthYear]) {
+                            grouped[monthYear] = [];
+                        }
+                        grouped[monthYear].push(date);
+                    });
+                    return grouped;
+                };
+                
+                contentDiv.innerHTML = `
+                    <h4 class="font-medium mb-3"></h4>
+                    <ul class="pl-6 list-disc space-y-6">
+                        ${Object.entries(availability).map(([siteId, dates]) => {
+                            if (!Array.isArray(dates)) {
+                                return `<li>Site ${siteId}: ${dates}</li>`;
+                            }
+                            
+                            // Group dates by month
+                            const groupedDates = groupDatesByMonth(dates);
+                            
+                            return `<li>
+                                <div class="font-medium">Site ${siteId}:</div>
+                                <div class="ml-4 mt-1">
+                                    ${Object.entries(groupedDates).map(([monthYear, monthDates]) => {
+                                        // Format dates and chunk them into groups of 3 for better readability
+                                        const formattedDates = monthDates.map(d => formatDate(d));
+                                        const chunkedDates = [];
+                                        for (let i = 0; i < formattedDates.length; i += 3) {
+                                            chunkedDates.push(formattedDates.slice(i, i + 3).join(", "));
+                                        }
+                                        
+                                        return `<div class="mb-3">
+                                            <div class="font-medium text-sm text-gray-700">${monthYear}:</div>
+                                            <div class="text-sm text-gray-600">${chunkedDates.join("<br>")}</div>
+                                        </div>`;
+                                    }).join('')}
+                                </div>
+                            </li>`;
+                        }).join('')}
+                    </ul>
+                `;
+                
+                // Add event listener to toggle accordion
+                headerDiv.addEventListener("click", function() {
+                    const arrow = headerDiv.querySelector('.accordion-icon');
+                    if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
+                        contentDiv.style.maxHeight = "2000px"; // Set a large value to ensure all content is visible
+                        arrow.textContent = '▲';
+                        contentDiv.querySelector('h4').innerHTML = 'Available Sites:';
+                        contentDiv.style.display = "block"; // Show content
+                    } else {
+                        contentDiv.style.maxHeight = "0px";
+                        arrow.textContent = '▼';
+                        contentDiv.querySelector('h4').innerHTML = '';
+                        contentDiv.style.display = "none"; // Hide content
+                    }
+                });
+                
+                // Append header and content to the campground div
+                campgroundDiv.appendChild(headerDiv);
+                campgroundDiv.appendChild(contentDiv);
+                
+                resultsContent.appendChild(campgroundDiv);
             }
         }
         
-        document.getElementById("results").classList.remove("hidden");
+        // Then show campgrounds without availability
+        for (const [facilityId, campgroundData] of Object.entries(results)) {
+            const campgroundName = campgroundData.name || CAMPGROUND_NAMES[facilityId];
+            const availability = campgroundData.availability || {};
+            const campgroundLink = CAMPGROUND_LINKS[facilityId];
+            
+            if (Object.keys(availability).length === 0) {
+                const campgroundDiv = document.createElement("div");
+                campgroundDiv.className = "mb-4 border border-gray-200 rounded-md overflow-hidden";
+                
+                // Create accordion header with no availability status
+                const headerDiv = document.createElement("div");
+                headerDiv.className = "accordion-header flex justify-between items-center p-3 bg-red-50";
+                headerDiv.innerHTML = `
+                    <h3 class="text-lg font-medium text-red-600">❌ No availability in ${campgroundName}</h3>
+                    <div class="flex items-center">
+                        <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center" onclick="event.stopPropagation()">
+                            View Campground
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </div>
+                `;
+                
+                campgroundDiv.appendChild(headerDiv);
+                resultsContent.appendChild(campgroundDiv);
+            }
+        }
+        
+        resultsDiv.classList.remove("hidden");
     }
 });
