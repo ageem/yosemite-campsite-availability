@@ -235,11 +235,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-green-100 rounded-t-lg";
                 headerDiv.innerHTML = `
                     <div class="flex items-center">
-                        <span class="text-green-600 mr-2">🏕️</span>
+                        <span class="material-icons text-green-600 mr-2">forest</span>
                         <h3 class="text-lg md:text-xl font-medium text-green-800">${campgroundName} has availability!</h3>
                     </div>
                     <div class="flex items-center">
-                        <span class="accordion-icon text-green-600 text-lg">▼</span>
+                        <span class="material-icons accordion-icon text-green-600">expand_more</span>
                     </div>
                 `;
                 
@@ -344,12 +344,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     const arrow = headerDiv.querySelector('.accordion-icon');
                     if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
                         contentDiv.style.maxHeight = "2000px"; // Set a large value to ensure all content is visible
-                        arrow.textContent = '▲';
+                        arrow.textContent = 'expand_less';
                         contentDiv.querySelector('h4').innerHTML = 'Available Sites:';
                         contentDiv.style.display = "block"; // Show content
                     } else {
                         contentDiv.style.maxHeight = "0px";
-                        arrow.textContent = '▼';
+                        arrow.textContent = 'expand_more';
                         contentDiv.querySelector('h4').innerHTML = '';
                         contentDiv.style.display = "none"; // Hide content
                     }
@@ -378,11 +378,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-red-50 rounded-t-lg";
                 headerDiv.innerHTML = `
                     <div class="flex items-center">
-                        <span class="text-red-600 mr-2">❌</span>
+                        <span class="material-icons text-red-600 mr-2">close</span>
                         <h3 class="text-lg font-medium text-red-600">No availability in ${campgroundName}</h3>
                     </div>
                     <div class="flex items-center">
-                        <span class="accordion-icon text-red-600 text-lg">▼</span>
+                        <span class="material-icons accordion-icon text-red-600">expand_more</span>
                     </div>
                 `;
 
@@ -411,11 +411,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const arrow = headerDiv.querySelector('.accordion-icon');
                     if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
                         contentDiv.style.maxHeight = "2000px";
-                        arrow.textContent = '▲';
+                        arrow.textContent = 'expand_less';
                         contentDiv.style.display = "block";
                     } else {
                         contentDiv.style.maxHeight = "0px";
-                        arrow.textContent = '▼';
+                        arrow.textContent = 'expand_more';
                         setTimeout(() => {
                             contentDiv.style.display = "none";
                         }, 500);
