@@ -78,17 +78,19 @@ def check_availability():
         
         for facility_id in campgrounds:
             try:
-                availability = check_yosemite.check_campsite_availability(facility_id, start_date, end_date)
+                availability_data = check_yosemite.check_campsite_availability(facility_id, start_date, end_date)
                 
                 # Get campground name
                 campground_name = check_yosemite.CAMPGROUND_NAMES.get(facility_id, f"Campground {facility_id}")
                 
                 results[facility_id] = {
                     'name': campground_name,
-                    'availability': availability
+                    'availability': availability_data['availability'],
+                    'reservation_types': availability_data['reservation_types'],
+                    'is_first_come_first_served': availability_data['is_first_come_first_served']
                 }
                 
-                if availability and len(availability) > 0:
+                if availability_data['availability'] and len(availability_data['availability']) > 0:
                     found_any = True
             except Exception as e:
                 print(f"Error checking availability for facility {facility_id}: {e}")

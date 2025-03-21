@@ -32,7 +32,7 @@ def check_campsite_availability(facility_id, start_date, end_date):
         end_date (str): End date in YYYY-MM-DD format
         
     Returns:
-        dict: Dictionary of available sites with their dates
+        dict: Dictionary containing availability info and reservation type
     """
     # Create a set of months to check
     start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
@@ -52,6 +52,8 @@ def check_campsite_availability(facility_id, start_date, end_date):
     
     # Check availability for each month
     availability = {}
+    reservation_types = {}
+    is_first_come_first_served = False
     
     for month_date in months_to_check:
         try:
@@ -73,6 +75,15 @@ def check_campsite_availability(facility_id, start_date, end_date):
             
             # Process the response data
             for site_id, details in data.get('campsites', {}).items():
+                # Check if the site is first-come, first-served
+                if 'reservationService' in details and details['reservationService'] == 'fcfs':
+                    is_first_come_first_served = True
+                    if site_id not in reservation_types:
+                        reservation_types[site_id] = 'fcfs'
+                else:
+                    if site_id not in reservation_types:
+                        reservation_types[site_id] = 'online'
+                
                 for date_str, status in details.get('availabilities', {}).items():
                     # Extract just the date part (YYYY-MM-DD) for comparison
                     date_part = date_str.split('T')[0] if 'T' in date_str else date_str
@@ -86,4 +97,8 @@ def check_campsite_availability(facility_id, start_date, end_date):
         except Exception as e:
             print(f"Error checking availability for month {month_date}: {e}")
     
-    return availability
+    return {
+        'availability': availability,
+        'reservation_types': reservation_types,
+        'is_first_come_first_served': is_first_come_first_served
+    }

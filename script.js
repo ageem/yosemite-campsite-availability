@@ -235,10 +235,32 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Add legend for color coding
+        const legendDiv = document.createElement("div");
+        legendDiv.className = "mb-4 p-4 bg-white border border-gray-200 rounded-md fade-in-up";
+        legendDiv.innerHTML = `
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-green-100 rounded mr-2"></div>
+                    <span class="text-sm">Available for online reservation</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-blue-100 rounded mr-2"></div>
+                    <span class="text-sm">First-come, first-served only</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-red-100 rounded mr-2"></div>
+                    <span class="text-sm">No availability (reserved/closed)</span>
+                </div>
+            </div>
+        `;
+        resultsContent.appendChild(legendDiv);
+        
         // First show campgrounds with availability
         for (const [facilityId, campgroundData] of Object.entries(results)) {
             const campgroundName = campgroundData.name || CAMPGROUND_NAMES[facilityId];
             const availability = campgroundData.availability || {};
+            const isFirstComeFirstServed = campgroundData.is_first_come_first_served || false;
             const campgroundLink = CAMPGROUND_LINKS[facilityId];
             
             if (Object.keys(availability).length > 0) {
@@ -248,16 +270,40 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Create unique ID for this accordion
                 const accordionId = `accordion-${facilityId}`;
                 
+                // Determine color based on reservation type
+                let bgColor, textColor, iconColor, iconName;
+                
+                if (isFirstComeFirstServed) {
+                    bgColor = "bg-blue-100";
+                    textColor = "text-blue-800";
+                    iconColor = "text-blue-600";
+                    iconName = "camping";
+                } else {
+                    bgColor = "bg-green-100";
+                    textColor = "text-green-800";
+                    iconColor = "text-green-600";
+                    iconName = "forest";
+                }
+                
                 // Create accordion header with availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-green-100 rounded-t-lg";
+                headerDiv.className = `accordion-header flex justify-between items-center p-4 ${bgColor} rounded-t-lg`;
+                
+                // Create header content with appropriate message
+                let headerMessage;
+                if (isFirstComeFirstServed) {
+                    headerMessage = `${campgroundName} - First-come, first-served only!`;
+                } else {
+                    headerMessage = `${campgroundName} has availability!`;
+                }
+                
                 headerDiv.innerHTML = `
                     <div class="flex items-center">
-                        <span class="material-icons text-green-600 mr-2">forest</span>
-                        <h3 class="text-lg md:text-xl font-medium text-green-800">${campgroundName} has availability!</h3>
+                        <span class="material-icons ${iconColor} mr-2">${iconName}</span>
+                        <h3 class="text-lg md:text-xl font-medium ${textColor}">${headerMessage}</h3>
                     </div>
                     <div class="flex items-center">
-                        <span class="material-icons accordion-icon text-green-600">expand_more</span>
+                        <span class="material-icons accordion-icon ${iconColor}">expand_more</span>
                     </div>
                 `;
                 
@@ -273,8 +319,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add the "Available Sites:" text and View Campground link at the top of content
                 const contentHeaderDiv = document.createElement("div");
                 contentHeaderDiv.className = "flex justify-between items-center mb-4";
+                
+                // Adjust header text based on reservation type
+                let headerText;
+                if (isFirstComeFirstServed) {
+                    headerText = "First-come, first-served sites:";
+                } else {
+                    headerText = "Available Sites:";
+                }
+                
                 contentHeaderDiv.innerHTML = `
-                    <h4 class="text-lg font-medium text-gray-700">Available Sites:</h4>
+                    <h4 class="text-lg font-medium text-gray-700">${headerText}</h4>
                     <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 text-sm md:text-base flex items-center">
                         View Campground
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -334,7 +389,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Group dates in chunks of 3 for better display
                     sortedDates.forEach(date => {
                         const formattedDate = formatDate(date.toISOString());
-                        datesHtml += `<span class="bg-green-100 text-green-800 text-xs md:text-sm px-2 py-1 rounded mr-2 mb-2">${formattedDate}</span>`;
+                        // Use the appropriate color based on reservation type
+                        const badgeClass = isFirstComeFirstServed 
+                            ? "bg-blue-100 text-blue-800" 
+                            : "bg-green-100 text-green-800";
+                        datesHtml += `<span class="${badgeClass} text-xs md:text-sm px-2 py-1 rounded mr-2 mb-2">${formattedDate}</span>`;
                     });
                     
                     datesHtml += '</div>';
