@@ -3,11 +3,13 @@
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "script.js", "use": "@vercel/static" },
+    { "src": "styles.css", "use": "@vercel/static" },
     { "src": "api/*.py", "use": "@vercel/python" }
   ],
   "routes": [
     { "src": "/", "dest": "/index.html" },
     { "src": "/script.js", "dest": "/script.js" },
+    { "src": "/styles.css", "dest": "/styles.css" },
     { "src": "/api/check_availability", "dest": "/api/check_availability.py" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
