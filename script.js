@@ -105,6 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Force some campgrounds to be first-come, first-served for testing
     const FORCE_FCFS = ["232458"]; // Platte River is first-come, first-served
     
+    // Force some campgrounds to be closed (not just reserved)
+    const FORCE_CLOSED = ["232453"]; // Bridalveil Creek is closed
+    
     // Save campground selections to cookies
     function saveCampgroundSelections() {
         const selectedCampgrounds = [];
@@ -279,20 +282,28 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add legend for color coding
         const legendDiv = document.createElement("div");
-        legendDiv.className = "mb-4 p-4 bg-white rounded-md fade-in-up";
+        legendDiv.className = "mb-4 p-4 rounded-md fade-in-up";
         legendDiv.innerHTML = `
-            <div class="flex flex-col md:flex-row gap-4">
+            <div class="flex flex-col gap-2 md:flex-row md:gap-4 md:justify-between">
                 <div class="flex items-center">
-                    <div class="w-4 h-4 bg-green-100 rounded mr-2"></div>
+                    <div class="w-4 h-4 bg-green-500 rounded-full mr-2"></div>
                     <span class="text-sm">Available for online reservation</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 bg-blue-100 rounded mr-2"></div>
+                    <div class="w-4 h-4 bg-blue-500 rounded-full mr-2"></div>
                     <span class="text-sm">First-come, first-served only</span>
                 </div>
                 <div class="flex items-center">
-                    <div class="w-4 h-4 bg-red-100 rounded mr-2"></div>
-                    <span class="text-sm">No availability (reserved/closed)</span>
+                    <div class="w-4 h-4 bg-purple-500 rounded-full mr-2"></div>
+                    <span class="text-sm">Mixed availability</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-red-500 rounded-full mr-2"></div>
+                    <span class="text-sm">Reserved</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-gray-500 rounded-full mr-2"></div>
+                    <span class="text-sm">Closed</span>
                 </div>
             </div>
         `;
@@ -319,28 +330,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     bgColor = "bg-blue-100";
                     textColor = "text-blue-800";
                     iconColor = "text-blue-600";
-                    iconName = "forest"; // Changed back to "forest" to match available campgrounds
+                    iconName = "forest"; 
+                    statusBadge = '';
                 } else {
                     bgColor = "bg-green-100";
                     textColor = "text-green-800";
                     iconColor = "text-green-600";
                     iconName = "forest";
+                    statusBadge = '';
                 }
                 
                 // Create accordion header with availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = `accordion-header flex justify-between items-center p-4 bg-white rounded-t-lg border-b`;
+                headerDiv.className = `accordion-header flex justify-between items-center p-4 border-b`;
                 
                 // Create header content with appropriate message
                 let headerMessage;
-                let statusBadge = '';
                 
                 if (isFirstComeFirstServed) {
                     headerMessage = `${campgroundName}`;
-                    statusBadge = '<span class="ml-2 px-2 py-1 text-xs font-semibold bg-blue-200 text-blue-800 rounded-full">FIRST-COME FIRST-SERVED</span>';
                 } else {
                     headerMessage = `${campgroundName}`;
-                    statusBadge = '<span class="ml-2 px-2 py-1 text-xs font-semibold bg-green-200 text-green-800 rounded-full">AVAILABLE ONLINE</span>';
                 }
                 
                 headerDiv.innerHTML = `
@@ -357,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Create accordion content
                 const contentDiv = document.createElement("div");
                 contentDiv.id = accordionId;
-                contentDiv.className = "p-6 bg-white"; 
+                contentDiv.className = "p-6"; 
                 contentDiv.style.maxHeight = "0";
                 contentDiv.style.overflow = "hidden";
                 contentDiv.style.transition = "max-height 0.5s ease-out"; 
@@ -370,9 +380,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Adjust header text based on reservation type
                 let headerText;
                 if (isFirstComeFirstServed) {
-                    headerText = "First-come, first-served sites:";
+                    headerText = "First-come, first-served only";
                 } else {
-                    headerText = "Available Sites:";
+                    headerText = "Available for online reservation";
                 }
                 
                 contentHeaderDiv.innerHTML = `
@@ -496,28 +506,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Create accordion header with no availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-white rounded-t-lg border-b";
+                headerDiv.className = "accordion-header flex justify-between items-center p-4 border-b";
+                
+                // Check if campground is closed or just reserved
+                const isClosed = FORCE_CLOSED.includes(facilityId);
+                const iconColor = isClosed ? "text-gray-600" : "text-red-600";
+                
                 headerDiv.innerHTML = `
                     <div class="flex items-center flex-wrap">
-                        <span class="material-icons text-red-600 mr-2">close</span>
-                        <h3 class="text-lg font-medium text-red-600">${campgroundName}</h3>
-                        <span class="ml-2 px-2 py-1 text-xs font-semibold bg-red-200 text-red-800 rounded-full">NO AVAILABILITY</span>
+                        <span class="material-icons ${iconColor} mr-2">close</span>
+                        <h3 class="text-lg font-medium ${iconColor}">${campgroundName}</h3>
                     </div>
                     <div class="flex items-center">
-                        <span class="material-icons accordion-icon text-red-600">expand_more</span>
+                        <span class="material-icons accordion-icon ${iconColor}">expand_more</span>
                     </div>
                 `;
 
                 // Create accordion content
                 const contentDiv = document.createElement("div");
-                contentDiv.className = "p-6 bg-white";
+                contentDiv.className = "p-6";
                 contentDiv.style.maxHeight = "0";
                 contentDiv.style.overflow = "hidden";
                 contentDiv.style.transition = "max-height 0.5s ease-out";
                 contentDiv.style.display = "none";
 
+                // Add appropriate message based on status
+                const statusMessage = isClosed ? "Closed" : "Reserved";
+                
                 // Add View Campground link in the content
                 contentDiv.innerHTML = `
+                    <div class="mb-4">
+                        <h4 class="text-lg font-medium text-gray-700">${statusMessage}</h4>
+                    </div>
                     <div class="flex justify-end">
                         <a href="${campgroundLink}" target="_blank" class="text-blue-500 hover:text-blue-700 flex items-center">
                             View Campground
@@ -527,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </a>
                     </div>
                 `;
-
+                
                 // Add event listener to toggle accordion
                 headerDiv.addEventListener("click", function() {
                     const arrow = headerDiv.querySelector('.accordion-icon');
