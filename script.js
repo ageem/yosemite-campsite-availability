@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Use the serverless API endpoint to check availability
         try {
             // Determine the API URL 
-            const apiUrl = '/check_availability';
+            const apiUrl = '/api/check_availability';
                 
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -197,7 +197,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
             
-            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const responseText = await response.text();
+            
+            let result;
+            try {
+                result = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error("Failed to parse JSON response:", responseText);
+                throw new Error("Invalid response from server");
+            }
             
             // Hide loading indicator
             document.getElementById("loading").classList.add("hidden");
@@ -488,6 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
                         contentDiv.style.maxHeight = "2000px";
                         arrow.textContent = 'expand_less';
+                        contentDiv.querySelector('h4').innerHTML = '';
                         contentDiv.style.display = "block";
                     } else {
                         contentDiv.style.maxHeight = "0px";
