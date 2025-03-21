@@ -182,8 +182,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Use the serverless API endpoint to check availability
         try {
-            // Determine the API URL 
-            const apiUrl = '/api/check_availability';
+            // Determine the API URL based on the environment
+            // If we're on localhost, use /check_availability, otherwise use /api/check_availability
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const apiUrl = isLocalhost ? '/check_availability' : '/api/check_availability';
+            
+            console.log(`Using API endpoint: ${apiUrl} (isLocalhost: ${isLocalhost})`);
                 
             const response = await fetch(apiUrl, {
                 method: 'POST',
