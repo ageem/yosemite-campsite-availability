@@ -68,6 +68,7 @@ python server.py
 
 ## 📝 Version History
 
+- **v1.2.1** (March 21, 2025): Fixed data structure handling for availability data
 - **v1.2.0** (March 21, 2025): Added color-coding for reservation types and widened UI to 800px
 - **v1.1.1** (March 21, 2025): Updated documentation with supported campgrounds list
 - **v1.1.0** (March 21, 2025): Added 10 new campgrounds and fixed API endpoint issue
