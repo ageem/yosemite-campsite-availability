@@ -102,6 +102,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "232458": "https://www.recreation.gov/camping/campgrounds/232458"
     };
     
+    // Force some campgrounds to be first-come, first-served for testing
+    const FORCE_FCFS = ["232458"]; // Platte River is first-come, first-served
+    
     // Save campground selections to cookies
     function saveCampgroundSelections() {
         const selectedCampgrounds = [];
@@ -276,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add legend for color coding
         const legendDiv = document.createElement("div");
-        legendDiv.className = "mb-4 p-4 bg-white border border-gray-200 rounded-md fade-in-up";
+        legendDiv.className = "mb-4 p-4 bg-white rounded-md fade-in-up";
         legendDiv.innerHTML = `
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex items-center">
@@ -299,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const [facilityId, campgroundData] of Object.entries(results)) {
             const campgroundName = campgroundData.name || CAMPGROUND_NAMES[facilityId];
             const availability = campgroundData.availability || {};
-            const isFirstComeFirstServed = campgroundData.is_first_come_first_served || false;
+            const isFirstComeFirstServed = FORCE_FCFS.includes(facilityId) || campgroundData.is_first_come_first_served || false;
             const campgroundLink = CAMPGROUND_LINKS[facilityId];
             
             if (Object.keys(availability).length > 0) {
@@ -316,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     bgColor = "bg-blue-100";
                     textColor = "text-blue-800";
                     iconColor = "text-blue-600";
-                    iconName = "camping";
+                    iconName = "forest"; // Changed back to "forest" to match available campgrounds
                 } else {
                     bgColor = "bg-green-100";
                     textColor = "text-green-800";
@@ -326,20 +329,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Create accordion header with availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = `accordion-header flex justify-between items-center p-4 ${bgColor} rounded-t-lg`;
+                headerDiv.className = `accordion-header flex justify-between items-center p-4 bg-white rounded-t-lg border-b`;
                 
                 // Create header content with appropriate message
                 let headerMessage;
+                let statusBadge = '';
+                
                 if (isFirstComeFirstServed) {
-                    headerMessage = `${campgroundName} - First-come, first-served only!`;
+                    headerMessage = `${campgroundName}`;
+                    statusBadge = '<span class="ml-2 px-2 py-1 text-xs font-semibold bg-blue-200 text-blue-800 rounded-full">FIRST-COME FIRST-SERVED</span>';
                 } else {
-                    headerMessage = `${campgroundName} has availability!`;
+                    headerMessage = `${campgroundName}`;
+                    statusBadge = '<span class="ml-2 px-2 py-1 text-xs font-semibold bg-green-200 text-green-800 rounded-full">AVAILABLE ONLINE</span>';
                 }
                 
                 headerDiv.innerHTML = `
-                    <div class="flex items-center">
+                    <div class="flex items-center flex-wrap">
                         <span class="material-icons ${iconColor} mr-2">${iconName}</span>
                         <h3 class="text-lg md:text-xl font-medium ${textColor}">${headerMessage}</h3>
+                        ${statusBadge}
                     </div>
                     <div class="flex items-center">
                         <span class="material-icons accordion-icon ${iconColor}">expand_more</span>
@@ -488,11 +496,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Create accordion header with no availability status
                 const headerDiv = document.createElement("div");
-                headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-red-50 rounded-t-lg";
+                headerDiv.className = "accordion-header flex justify-between items-center p-4 bg-white rounded-t-lg border-b";
                 headerDiv.innerHTML = `
-                    <div class="flex items-center">
+                    <div class="flex items-center flex-wrap">
                         <span class="material-icons text-red-600 mr-2">close</span>
-                        <h3 class="text-lg font-medium text-red-600">No availability in ${campgroundName}</h3>
+                        <h3 class="text-lg font-medium text-red-600">${campgroundName}</h3>
+                        <span class="ml-2 px-2 py-1 text-xs font-semibold bg-red-200 text-red-800 rounded-full">NO AVAILABILITY</span>
                     </div>
                     <div class="flex items-center">
                         <span class="material-icons accordion-icon text-red-600">expand_more</span>
@@ -525,12 +534,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
                         contentDiv.style.maxHeight = "2000px";
                         arrow.textContent = 'expand_less';
-                        contentDiv.style.display = "block";
+                        contentDiv.style.display = "block"; // Show content
                     } else {
                         contentDiv.style.maxHeight = "0px";
                         arrow.textContent = 'expand_more';
                         setTimeout(() => {
-                            contentDiv.style.display = "none";
+                            contentDiv.style.display = "none"; // Hide content
                         }, 500);
                     }
                 });
