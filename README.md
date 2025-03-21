@@ -8,11 +8,32 @@ Ever tried to book a campsite in Yosemite? It's like trying to get front-row tic
 
 ## ✨ Super Cool Features
 
-- 🔍 **Multi-Campground Search**: Hunt for spots in Upper Pines, Lower Pines, North Pines, and more!
+- 🔍 **Multi-Campground Search**: Hunt for spots in Upper Pines, Lower Pines, North Pines, and many more Yosemite campgrounds!
 - 📅 **Smart Date Picker**: Pick your dream camping dates with our intuitive calendar
 - 🚀 **One-Click Booking**: Jump straight to Recreation.gov when you find your perfect spot
 - 📱 **Works Everywhere**: Use it on your phone while hiking or on your laptop while pretending to work
 - 🎯 **Visual Awesomeness**: Green means GO CAMPING! Red means... maybe try glamping?
+
+## 🏕️ Supported Campgrounds
+
+As of v1.1.0, we support the following campgrounds:
+
+1. Upper Pines
+2. Lower Pines
+3. North Pines
+4. Hodgdon Meadow
+5. Crane Flat
+6. Wawona
+7. Tuolumne Meadows
+8. White Wolf
+9. Bridalveil Creek
+10. Yosemite Creek
+11. Porcupine Flat
+12. Tamarack Flat
+13. Watchman
+14. Platte River
+15. Grant River
+16. Fowlers Campground
 
 ## 🎮 How To Use It (Even If You're Not Tech-Savvy)
 
@@ -44,6 +65,11 @@ python server.py
 # Open the portal (aka your browser)
 # and navigate to http://localhost:8000
 ```
+
+## 📝 Version History
+
+- **v1.1.0** (March 21, 2025): Added 10 new campgrounds and fixed API endpoint issue
+- **v1.0.0** (March 20, 2025): Initial stable release with core functionality and modern UI
 
 ## 🌟 Why We Made This
 
