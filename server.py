@@ -119,7 +119,17 @@ def check_availability_api(start_date, end_date, campgrounds):
         "232449": "North Pines",
         "232451": "Hodgdon Meadow",
         "233503": "Grant River",
-        "255119": "Fowlers Campground"
+        "255119": "Fowlers Campground",
+        "232452": "Crane Flat",
+        "232446": "Wawona",
+        "232448": "Tuolumne Meadows",
+        "10083567": "White Wolf",
+        "232453": "Bridalveil Creek",
+        "10083840": "Yosemite Creek",
+        "10083831": "Porcupine Flat",
+        "10083845": "Tamarack Flat",
+        "232445": "Watchman",
+        "232458": "Platte River"
     }
     
     for facility_id in campgrounds:

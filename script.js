@@ -71,7 +71,17 @@ document.addEventListener('DOMContentLoaded', function() {
         "232447": "Upper Pines",
         "232450": "Lower Pines",
         "232449": "North Pines",
-        "232451": "Hodgdon Meadow"
+        "232451": "Hodgdon Meadow",
+        "232452": "Crane Flat",
+        "232446": "Wawona",
+        "232448": "Tuolumne Meadows",
+        "10083567": "White Wolf",
+        "232453": "Bridalveil Creek",
+        "10083840": "Yosemite Creek",
+        "10083831": "Porcupine Flat",
+        "10083845": "Tamarack Flat",
+        "232445": "Watchman",
+        "232458": "Platte River"
     };
     
     // Campground links mapping
@@ -79,7 +89,17 @@ document.addEventListener('DOMContentLoaded', function() {
         "232447": "https://www.recreation.gov/camping/campgrounds/232447",
         "232450": "https://www.recreation.gov/camping/campgrounds/232450",
         "232449": "https://www.recreation.gov/camping/campgrounds/232449",
-        "232451": "https://www.recreation.gov/camping/campgrounds/232451"
+        "232451": "https://www.recreation.gov/camping/campgrounds/232451",
+        "232452": "https://www.recreation.gov/camping/campgrounds/232452",
+        "232446": "https://www.recreation.gov/camping/campgrounds/232446",
+        "232448": "https://www.recreation.gov/camping/campgrounds/232448",
+        "10083567": "https://www.recreation.gov/camping/campgrounds/10083567",
+        "232453": "https://www.recreation.gov/camping/campgrounds/232453",
+        "10083840": "https://www.recreation.gov/camping/campgrounds/10083840",
+        "10083831": "https://www.recreation.gov/camping/campgrounds/10083831",
+        "10083845": "https://www.recreation.gov/camping/campgrounds/10083845",
+        "232445": "https://www.recreation.gov/camping/campgrounds/232445",
+        "232458": "https://www.recreation.gov/camping/campgrounds/232458"
     };
     
     // Save campground selections to cookies
@@ -162,10 +182,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Use the serverless API endpoint to check availability
         try {
-            // Determine the API URL based on whether we're in development or production
-            const apiUrl = window.location.hostname === 'localhost' 
-                ? '/check_availability' 
-                : '/api/check_availability';
+            // Determine the API URL 
+            const apiUrl = '/check_availability';
                 
             const response = await fetch(apiUrl, {
                 method: 'POST',
