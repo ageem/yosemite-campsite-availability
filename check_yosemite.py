@@ -24,10 +24,10 @@ CAMPGROUND_NAMES = {
 
 def check_campsite_availability(facility_id, start_date, end_date):
     """
-    Check campsite availability for a specific facility and date range.
+    Check campsite availability for a given facility ID and date range.
     
     Args:
-        facility_id (str): The facility ID for the campground
+        facility_id (str): Recreation.gov facility ID
         start_date (str): Start date in YYYY-MM-DD format
         end_date (str): End date in YYYY-MM-DD format
         
@@ -89,14 +89,17 @@ def check_campsite_availability(facility_id, start_date, end_date):
                     date_part = date_str.split('T')[0] if 'T' in date_str else date_str
                     
                     # Compare dates as strings (YYYY-MM-DD format ensures correct comparison)
-                    if date_part >= start_date and date_part <= end_date and status == "Available":
-                        if site_id not in availability:
-                            availability[site_id] = []
-                        availability[site_id].append(date_part)
-                        
+                    if date_part >= start_date and date_part <= end_date:
+                        if status == 'Available':
+                            if date_part not in availability:
+                                availability[date_part] = []
+                            availability[date_part].append(site_id)
         except Exception as e:
             print(f"Error checking availability for month {month_date}: {e}")
+            # Continue to next month
+            continue
     
+    # Return the results
     return {
         'availability': availability,
         'reservation_types': reservation_types,

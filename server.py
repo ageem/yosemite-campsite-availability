@@ -83,6 +83,17 @@ def check_availability():
                 # Get campground name
                 campground_name = check_yosemite.CAMPGROUND_NAMES.get(facility_id, f"Campground {facility_id}")
                 
+                # Ensure we have all the expected keys in the response
+                if not isinstance(availability_data, dict):
+                    availability_data = {'availability': {}, 'reservation_types': {}, 'is_first_come_first_served': False}
+                
+                if 'availability' not in availability_data:
+                    availability_data['availability'] = {}
+                if 'reservation_types' not in availability_data:
+                    availability_data['reservation_types'] = {}
+                if 'is_first_come_first_served' not in availability_data:
+                    availability_data['is_first_come_first_served'] = False
+                
                 results[facility_id] = {
                     'name': campground_name,
                     'availability': availability_data['availability'],

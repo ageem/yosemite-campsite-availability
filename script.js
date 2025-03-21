@@ -355,26 +355,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Group dates by month and year
                 const groupedDates = {};
                 
-                Object.keys(availability).forEach(siteId => {
-                    const dates = availability[siteId];
-                    if (!Array.isArray(dates)) {
-                        return;
-                    }
-                    dates.forEach(date => {
-                        const dateObj = new Date(date);
-                        const monthYear = `${dateObj.toLocaleString('default', { month: 'long' })} ${dateObj.getFullYear()}`;
-                        
-                        if (!groupedDates[monthYear]) {
-                            groupedDates[monthYear] = {};
-                        }
-                        
-                        // Use the date string as key to avoid duplicates
-                        const dateStr = dateObj.toISOString().split('T')[0];
-                        if (!groupedDates[monthYear][dateStr]) {
-                            groupedDates[monthYear][dateStr] = dateObj;
+                // Handle the new data structure where availability is keyed by date, not site ID
+                if (availability) {
+                    Object.keys(availability).forEach(dateStr => {
+                        const siteIds = availability[dateStr];
+                        if (Array.isArray(siteIds) && siteIds.length > 0) {
+                            const dateObj = new Date(dateStr);
+                            const monthYear = `${dateObj.toLocaleString('default', { month: 'long' })} ${dateObj.getFullYear()}`;
+                            
+                            if (!groupedDates[monthYear]) {
+                                groupedDates[monthYear] = {};
+                            }
+                            
+                            // Use the date string as key to avoid duplicates
+                            if (!groupedDates[monthYear][dateStr]) {
+                                groupedDates[monthYear][dateStr] = dateObj;
+                            }
                         }
                     });
-                });
+                }
                 
                 // Create HTML for grouped dates
                 let datesHtml = '';
@@ -401,15 +400,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 contentDiv.innerHTML += `
                     <ul class="pl-6 list-disc space-y-6">
-                        ${Object.entries(availability).map(([siteId, dates]) => {
-                            if (!Array.isArray(dates)) {
-                                return `<li>Site ${siteId}: ${dates}</li>`;
+                        ${Object.entries(availability).map(([dateStr, siteIds]) => {
+                            if (!Array.isArray(siteIds)) {
+                                return `<li>${dateStr}: ${siteIds}</li>`;
                             }
                             
                             return `<li>
-                                <div class="font-medium">Site ${siteId}:</div>
+                                <div class="font-medium">${formatDate(dateStr)}:</div>
                                 <div class="ml-4 mt-1">
-                                    ${datesHtml}
+                                    ${siteIds.join(', ')}
                                 </div>
                             </li>`;
                         }).join('')}
