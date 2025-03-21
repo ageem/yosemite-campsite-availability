@@ -12,7 +12,7 @@ Ever tried to book a campsite in Yosemite? It's like trying to get front-row tic
 - 📅 **Smart Date Picker**: Pick your dream camping dates with our intuitive calendar
 - 🚀 **One-Click Booking**: Jump straight to Recreation.gov when you find your perfect spot
 - 📱 **Works Everywhere**: Use it on your phone while hiking or on your laptop while pretending to work
-- 🎯 **Visual Awesomeness**: Green means GO CAMPING! Red means... maybe try glamping?
+- 🎯 **Visual Awesomeness**: Color-coded availability - Green for online reservations, Blue for first-come first-served, Red for no availability
 
 ## 🏕️ Supported Campgrounds
 
@@ -68,6 +68,8 @@ python server.py
 
 ## 📝 Version History
 
+- **v1.2.0** (March 21, 2025): Added color-coding for reservation types and widened UI to 800px
+- **v1.1.1** (March 21, 2025): Updated documentation with supported campgrounds list
 - **v1.1.0** (March 21, 2025): Added 10 new campgrounds and fixed API endpoint issue
 - **v1.0.0** (March 20, 2025): Initial stable release with core functionality and modern UI
 
