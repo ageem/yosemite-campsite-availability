@@ -144,6 +144,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load saved campground selections
     loadCampgroundSelections();
     
+    // Set up Select All and Clear All buttons
+    const selectAllBtn = document.getElementById('select-all-btn');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const campgroundCheckboxes = document.querySelectorAll('.campground-checkbox');
+    
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            campgroundCheckboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+    }
+    
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            campgroundCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+    }
+    
     document.getElementById("search-btn").addEventListener("click", async function() {
         // Get selected dates
         const startDate = document.getElementById("start-date").value;
@@ -437,12 +460,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
                         contentDiv.style.maxHeight = "2000px"; // Set a large value to ensure all content is visible
                         arrow.textContent = 'expand_less';
-                        contentDiv.querySelector('h4').innerHTML = 'Available Sites:';
                         contentDiv.style.display = "block"; // Show content
                     } else {
                         contentDiv.style.maxHeight = "0px";
                         arrow.textContent = 'expand_more';
-                        contentDiv.querySelector('h4').innerHTML = '';
                         contentDiv.style.display = "none"; // Hide content
                     }
                 });
@@ -504,7 +525,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (contentDiv.style.maxHeight === "0px" || !contentDiv.style.maxHeight) {
                         contentDiv.style.maxHeight = "2000px";
                         arrow.textContent = 'expand_less';
-                        contentDiv.querySelector('h4').innerHTML = '';
                         contentDiv.style.display = "block";
                     } else {
                         contentDiv.style.maxHeight = "0px";
